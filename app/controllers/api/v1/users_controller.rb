@@ -1,12 +1,14 @@
 class Api::V1::UsersController < ApplicationController
+	before_action :verify_token, except: [:sign_up, :login, :create]
+
 	def index
-		render json: User.all
+		render self.blueprint(User.all)
 	end
 
 	def create
-		user = User.new(user_params)
-		if user.save
-			render json: user
+		user = self.new_user
+		if !!user
+			render json: self.blueprint(user)
 		else
 			render :not_acceptable
 		end
@@ -16,7 +18,7 @@ class Api::V1::UsersController < ApplicationController
 		user = User.find(params[:id])
 		if !!user
 			if user.id == decoded_token["id"]
-				render json: user
+				render json: self.blueprint(user)
 			else
 				render json: {message: "Not allowed!!"}
 			end
@@ -26,13 +28,18 @@ class Api::V1::UsersController < ApplicationController
 	end
 
 	def sign_up
+		if !!self.new_user
+			self.login
+		else
+			render :not_acceptable
+		end
 	end
 
 	def login
 		user = User.find_by(username: params[:username])
 		if !!user
 			if !!user.authenticate(params[:password])
-				render json: {user: user, token: new_token(user.id)}
+				render json: {user: self.blueprint(user), token: new_token(user.id)}
 			else
 				render json: {message: "Invalid Password"}
 			end
@@ -41,7 +48,21 @@ class Api::V1::UsersController < ApplicationController
 		end
 	end
 
+	def new_user
+		user = User.new(user_params)
+		if !!user.save
+			user
+		else
+			nil
+		end
+	end
+
+	def blueprint(obj)
+		UserBlueprint.render_as_hash(obj)
+	end
+
 	private
+
 	def user_params
 		params.permit(:username, :name, :password)
 	end

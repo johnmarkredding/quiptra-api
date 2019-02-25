@@ -1,4 +1,6 @@
 class Api::V1::BookingsController < ApplicationController
+	before_action :verify_token
+
 	def index
 		render json: Booking.all
 	end
@@ -22,6 +24,7 @@ class Api::V1::BookingsController < ApplicationController
 	end
 
 	private
+	
 	def booking_params
 		params.permit(:renter_id, :listing_id, :dates)
 	end

@@ -1,6 +1,10 @@
 class Api::V1::ListingsController < ApplicationController
+	before_action :verify_token
+
 	def index
-		render json: Listing.all
+		# listings = Listing.filteredListings(params)
+		listings = Listing.all.select{|x| x.title.include?(params[:term]) && x.city.include?(params[:city]) && x.state.include?(params[:state])}
+		render json: listings
 	end
 
 	def create
@@ -22,6 +26,7 @@ class Api::V1::ListingsController < ApplicationController
 	end
 
 	private
+
 	def listing_params
 		params.permit(:owner_id, :title, :body, :price, :email, :phone, :street_address, :city, :state, :image_url)
 	end

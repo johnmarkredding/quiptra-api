@@ -17,6 +17,8 @@ gem 'redis', '~> 4.0'
 gem 'bcrypt', '~> 3.1.7'
 
 gem 'jwt'
+
+gem 'blueprinter'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 

@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+
 	def new_token(id)
 		self.encode_token({id: id})
 	end
@@ -19,6 +20,12 @@ class ApplicationController < ActionController::API
 			rescue JWT::DecodeError
 				nil
 			end
+		end
+	end
+
+	def verify_token
+		if !self.decoded_token
+			render json: {message: "Invalid token"}
 		end
 	end
 
