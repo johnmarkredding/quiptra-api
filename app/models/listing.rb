@@ -23,9 +23,12 @@ class Listing < ApplicationRecord
 			listings = Listing.where("state LIKE '?%'", s[:state])
 		when -> (s) { s[:term] != "" }
 			listings = Listing.where("title LIKE '%?%'", s[:term])
-		else
+		end
+
+		if listings.empty?
 			listings = Listing.all
 		end
+
 		listings
 	end
 end

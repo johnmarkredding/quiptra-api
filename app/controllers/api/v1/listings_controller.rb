@@ -3,7 +3,10 @@ class Api::V1::ListingsController < ApplicationController
 
 	def index
 		# listings = Listing.filteredListings(params)
-		listings = Listing.all.select{|x| x.title.include?(params[:term]) && x.city.include?(params[:city]) && x.state.include?(params[:state])}
+		listings = Listing.all.select{|x| x.title.downcase.include?(params[:term].downcase) && x.city.downcase.include?(params[:city].downcase) && x.state.downcase.include?(params[:state].downcase)}
+		if listings.empty?
+			listings = Listing.all
+		end
 		render json: listings
 	end
 
