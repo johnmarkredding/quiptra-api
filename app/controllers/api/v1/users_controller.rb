@@ -27,6 +27,15 @@ class Api::V1::UsersController < ApplicationController
 		end
 	end
 
+	def current
+		user = User.find(decoded_token["id"])
+		if !!user
+			render json: self.blueprint(user)
+		else
+			render json: {message: "Not Found!!"}
+		end
+	end
+
 	def sign_up
 		if !!self.new_user
 			self.login
