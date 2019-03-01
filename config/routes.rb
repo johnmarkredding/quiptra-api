@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 			post "/sign-up", to: "users#sign_up", as: "sign_up"
 			resources :users, only: [:create, :show, :destroy, :update, :index]
 			
+			get "/bookings/current", to: "bookings#current"
+			get "/bookings/requested", to: "bookings#requested"
 			resources :bookings, only: [:create, :show, :destroy, :update, :index]
 
 			get "/listings/current", to: "listings#current"

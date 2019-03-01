@@ -43,5 +43,5 @@ end
 list1 = Listing.all.last
 list2 = Listing.all.first
 
-book1 = Booking.create(renter_id: jm.id, listing_id: list1.id)
-book2 = Booking.create(renter_id: stv.id, listing_id: list2.id)
+book1 = Booking.create(renter_id: jm.id, listing_id: list1.id, dates: (Date.new(2019, 3, 8)...Date.new(2019, 3, 26)))
+book2 = Booking.create(renter_id: stv.id, listing_id: list2.id, dates: (Date.new(2019, 4, 8)...Date.new(2019, 4, 26)))
