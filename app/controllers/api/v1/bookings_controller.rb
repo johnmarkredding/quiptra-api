@@ -23,9 +23,9 @@ class Api::V1::BookingsController < ApplicationController
 		render json: self.blueprint(bookings)
 	end
 
-	def requested
+	def pending
 		user = User.find(decoded_token["id"])
-		bookings = user.booking_requests
+		bookings = user.booking_requests.where(status: "pending")
 		render json: self.blueprint(bookings)
 	end
 
@@ -38,6 +38,15 @@ class Api::V1::BookingsController < ApplicationController
 		end
 	end
 
+	def update
+		booking = Booking.find(params[:id])
+		if !!booking && booking.update(booking_params)
+			render json: booking
+		else
+			render json: {message: "Update failed!!"}
+		end
+	end
+
 	def blueprint(obj)
 		BookingBlueprint.render_as_hash(obj)
 	end
@@ -45,6 +54,6 @@ class Api::V1::BookingsController < ApplicationController
 	private
 	
 	def booking_params
-		params.require(:booking).permit(:renter_id, :listing_id, :dates)
+		params.require(:booking).permit(:renter_id, :listing_id, :dates, :status)
 	end
 end

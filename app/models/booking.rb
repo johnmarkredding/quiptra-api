@@ -4,7 +4,7 @@ class Booking < ApplicationRecord
 
 	enum status: {
     pending: "pending",
-    accepted: "accepted",
+    approved: "approved",
     denied: "denied"
   }
 end

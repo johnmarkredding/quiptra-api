@@ -3,6 +3,15 @@ class Listing < ApplicationRecord
 	has_many :users, through: :bookings, foreign_key: :renter_id
 	belongs_to :owner, class_name: "User"
 
+	def booked_dates
+		dates = []
+		dateranges = self.bookings.map{|b| b.dates}
+		dateranges.each do |dr|
+			dr.each {|d| dates << d}
+		end
+		dates
+	end
+
 
 	def self.filteredListings(s)
 

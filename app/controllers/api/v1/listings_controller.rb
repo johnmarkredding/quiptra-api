@@ -3,9 +3,10 @@ class Api::V1::ListingsController < ApplicationController
 
 	def index
 		# listings = Listing.filteredListings(params)
-		listings = Listing.all.select{|x| x.title.downcase.include?(params[:term].downcase) && x.city.downcase.include?(params[:city].downcase) && x.state.downcase.include?(params[:state].downcase)}
+		user = User.find(decoded_token["id"])
+		listings = Listing.where.not(owner_id: user.id).select{|x| x.title.downcase.include?(params[:term].downcase) && x.city.downcase.include?(params[:city].downcase) && x.state.downcase.include?(params[:state].downcase)}
 		if listings.empty?
-			listings = Listing.all
+			listings = Listing.where.not(owner_id: user.id)
 		end
 		render json: self.blueprint(listings)
 	end
@@ -34,6 +35,15 @@ class Api::V1::ListingsController < ApplicationController
 		end
 	end
 
+	def booked_dates
+		listing = Listing.find(params[:id])
+		if !!listing
+			render json: listing.booked_dates
+		else
+			render json: {message: "Not a valid listing"}
+		end
+	end
+
 	def blueprint(obj)
 		ListingBlueprint.render_as_hash(obj)
 	end
@@ -41,6 +51,6 @@ class Api::V1::ListingsController < ApplicationController
 	private
 
 	def listing_params
-		params.permit(:owner_id, :title, :body, :price, :email, :phone, :street_address, :city, :state, :image_url)
+		params.permit(:id, :owner_id, :title, :body, :price, :email, :phone, :street_address, :city, :state, :image_url)
 	end
 end
