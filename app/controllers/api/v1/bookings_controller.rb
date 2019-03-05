@@ -7,13 +7,18 @@ class Api::V1::BookingsController < ApplicationController
 
 	def create
 		user = User.find(decoded_token["id"])
-		split_dates = booking_params[:dates].split("...");
+		split_dates = params[:dates].split("...");
 		date_range = (Date.parse(split_dates[0])...Date.parse(split_dates[1]))
-		booking = Booking.new({listing_id: booking_params[:listing_id], renter_id: user.id, dates: date_range, status: "pending"})
-		if !!booking.save
-			render json: booking
+		listing = Listing.find(params[:listing_id])
+		if (!listing.overlaps_booking_dates?(date_range))
+			booking = Booking.new({listing_id: params[:listing_id], renter_id: user.id, dates: date_range, status: "pending"})
+			if !!booking.save
+				render json: booking
+			else
+				render json: {message: "Not allowed!!"}
+			end
 		else
-			render json: {message: "Not allowed!!"}
+			render json: {message: "Overlapping Dates!!"}
 		end
 	end
 

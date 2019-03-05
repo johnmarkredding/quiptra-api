@@ -2,6 +2,9 @@ class User < ApplicationRecord
 	has_many :bookings, foreign_key: :renter_id
 	has_many :listings, foreign_key: :owner_id
 	has_many :booking_requests, through: :listings, source: "bookings"
+	validates_presence_of :username, :name
+	validates_uniqueness_of :username
+	
 	has_secure_password
 
 	def requested_listings

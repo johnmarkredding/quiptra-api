@@ -18,7 +18,9 @@ class Api::V1::ListingsController < ApplicationController
 	end
 
 	def create
+		user = User.find(decoded_token["id"])
 		listing = Listing.new(listing_params)
+		listing.owner_id = user.id
 		if listing.save
 			render json: self.blueprint(listing)
 		else
