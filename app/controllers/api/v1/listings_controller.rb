@@ -27,6 +27,20 @@ class Api::V1::ListingsController < ApplicationController
 			render :not_acceptable
 		end
 	end
+
+	def update
+		user = User.find(decoded_token["id"])
+		if Listing.exists?(params[:id])
+			listing = Listing.find(params[:id])
+			if listing.update(listing_params)
+				render json: self.blueprint(listing)
+			else
+				render :not_acceptable
+			end
+		else
+			render :not_acceptable
+		end
+	end
 	
 	def show
 		listing = Listing.find(params[:id])
